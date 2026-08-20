@@ -1,6 +1,7 @@
 """LangGraph / Multi-agent workflow runner."""
 
 from multi_agent_research_lab.agents.analyst import AnalystAgent
+from multi_agent_research_lab.agents.critic import CriticAgent
 from multi_agent_research_lab.agents.researcher import ResearcherAgent
 from multi_agent_research_lab.agents.supervisor import SupervisorAgent
 from multi_agent_research_lab.agents.writer import WriterAgent
@@ -19,6 +20,7 @@ class MultiAgentWorkflow:
         self.researcher = ResearcherAgent()
         self.analyst = AnalystAgent()
         self.writer = WriterAgent()
+        self.critic = CriticAgent()
 
     def build(self) -> dict[str, object]:
         """Create the workflow node dictionary."""
@@ -27,6 +29,7 @@ class MultiAgentWorkflow:
             "researcher": self.researcher,
             "analyst": self.analyst,
             "writer": self.writer,
+            "critic": self.critic,
         }
 
     def run(self, state: ResearchState) -> ResearchState:
@@ -45,8 +48,11 @@ class MultiAgentWorkflow:
                 state = self.analyst.run(state)
             elif next_route == "writer":
                 state = self.writer.run(state)
+                # Run quality critic after writer completes
+                state = self.critic.run(state)
             else:
                 break
 
         return state
+
 
