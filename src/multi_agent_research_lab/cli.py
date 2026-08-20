@@ -37,20 +37,41 @@ def _parse_query(query: str) -> ResearchQuery:
         raise typer.Exit(code=1) from exc
 
 
+import time
+from multi_agent_research_lab.services.llm_client import LLMClient
+
+
 @app.command()
 def baseline(
     query: Annotated[str, typer.Option("--query", "-q", help="Research query")],
 ) -> None:
-    """Run a minimal single-agent baseline placeholder."""
+    """Run a single-agent baseline using LLMClient."""
 
     _init()
     request = _parse_query(query)
     state = ResearchState(request=request)
-    state.final_answer = (
-        "Baseline skeleton response. TODO(student): replace this with a real single-agent "
-        "implementation and record latency/cost/quality metrics."
+
+    llm = LLMClient()
+    start_time = time.time()
+    
+    response = llm.complete(
+        system_prompt=(
+            "You are a helpful research assistant. Research the user query thoroughly "
+            "and provide a concise, high-quality summary."
+        ),
+        user_prompt=request.query,
     )
-    console.print(Panel.fit(state.final_answer, title="Single-Agent Baseline"))
+    latency = time.time() - start_time
+    
+    state.final_answer = response.content
+    metrics_info = (
+        f"\n\n--- Baseline Metrics ---\n"
+        f"Latency: {latency:.2f}s | "
+        f"Tokens (in/out): {response.input_tokens}/{response.output_tokens} | "
+        f"Est. Cost: ${response.cost_usd:.6f}" if response.cost_usd else f"Latency: {latency:.2f}s"
+    )
+    console.print(Panel.fit(state.final_answer + "\n" + metrics_info, title="Single-Agent Baseline Result"))
+
 
 
 @app.command("multi-agent")
