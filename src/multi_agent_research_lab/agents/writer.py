@@ -24,8 +24,8 @@ class WriterAgent(BaseAgent):
         response = self.llm_client.complete(
             system_prompt=(
                 "You are an expert technical writer. Synthesize research notes, analysis notes, "
-                "and source links into a polished, comprehensive research report tailored to the target audience. "
-                "Include a References/Citations section at the end."
+                "and source links into a polished, comprehensive research report tailored to "
+                "the target audience. Include a References/Citations section at the end."
             ),
             user_prompt=(
                 f"Topic Query: {state.request.query}\n"

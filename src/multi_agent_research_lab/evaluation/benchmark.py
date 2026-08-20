@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from time import perf_counter
 
-from multi_agent_research_lab.core.schemas import BenchmarkMetrics
+from multi_agent_research_lab.core.schemas import BenchmarkMetrics, ResearchQuery
 from multi_agent_research_lab.core.state import ResearchState
 
 Runner = Callable[[str], ResearchState]
@@ -15,7 +15,6 @@ def run_benchmark(
     """Measure latency, cost, citation coverage, and quality score."""
 
     started = perf_counter()
-    error_occurred = False
     try:
         state = runner(query)
     except Exception as exc:

@@ -16,7 +16,9 @@ class ResearcherAgent(BaseAgent):
 
     def run(self, state: ResearchState) -> ResearchState:
         """Populate `state.sources` and `state.research_notes`."""
-        sources = self.search_client.search(state.request.query, max_results=state.request.max_sources)
+        sources = self.search_client.search(
+            state.request.query, max_results=state.request.max_sources
+        )
         state.sources.extend(sources)
 
         sources_text = "\n".join(

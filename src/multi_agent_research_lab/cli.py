@@ -1,5 +1,4 @@
-"""Command-line entrypoint for the lab starter."""
-
+import time
 from typing import Annotated
 
 import typer
@@ -13,6 +12,7 @@ from multi_agent_research_lab.core.schemas import ResearchQuery
 from multi_agent_research_lab.core.state import ResearchState
 from multi_agent_research_lab.graph.workflow import MultiAgentWorkflow
 from multi_agent_research_lab.observability.logging import configure_logging
+from multi_agent_research_lab.services.llm_client import LLMClient
 
 app = typer.Typer(help="Multi-Agent Research Lab starter CLI")
 console = Console()
@@ -35,10 +35,6 @@ def _parse_query(query: str) -> ResearchQuery:
             )
         )
         raise typer.Exit(code=1) from exc
-
-
-import time
-from multi_agent_research_lab.services.llm_client import LLMClient
 
 
 @app.command()
@@ -70,7 +66,9 @@ def baseline(
         f"Tokens (in/out): {response.input_tokens}/{response.output_tokens} | "
         f"Est. Cost: ${response.cost_usd:.6f}" if response.cost_usd else f"Latency: {latency:.2f}s"
     )
-    console.print(Panel.fit(state.final_answer + "\n" + metrics_info, title="Single-Agent Baseline Result"))
+    panel_content = (state.final_answer or "") + "\n" + metrics_info
+    console.print(Panel.fit(panel_content, title="Single-Agent Baseline Result"))
+
 
 
 

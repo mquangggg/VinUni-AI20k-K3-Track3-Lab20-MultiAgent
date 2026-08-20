@@ -1,6 +1,6 @@
 import json
-import urllib.request
 import urllib.error
+import urllib.request
 
 from multi_agent_research_lab.core.config import get_settings
 from multi_agent_research_lab.core.schemas import SourceDocument

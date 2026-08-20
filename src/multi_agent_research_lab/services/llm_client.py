@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from openai import OpenAI
+
 from multi_agent_research_lab.core.config import get_settings
 
 
@@ -45,10 +46,12 @@ class LLMClient:
         output_tokens = response.usage.completion_tokens if response.usage else None
 
         cost_usd = None
-        if input_tokens is not None and output_tokens is not None:
-            # gpt-4o-mini pricing approx: $0.15/1M input, $0.60/1M output
-            if "gpt-4o-mini" in self.model:
-                cost_usd = (input_tokens * 0.15 / 1_000_000) + (output_tokens * 0.60 / 1_000_000)
+        if (
+            input_tokens is not None
+            and output_tokens is not None
+            and "gpt-4o-mini" in self.model
+        ):
+            cost_usd = (input_tokens * 0.15 / 1_000_000) + (output_tokens * 0.60 / 1_000_000)
 
         return LLMResponse(
             content=content,
